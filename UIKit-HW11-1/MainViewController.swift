@@ -14,6 +14,7 @@ final class MainViewController: UIViewController {
         $0.dataSource = self
         $0.register(CellView.self, forCellReuseIdentifier: CellView.identifier)
         $0.rowHeight = view.frame.width
+        $0.allowsSelection = false // Отключаем выбор
         return $0
     }(UITableView(frame: view.frame, style: .plain))
 
