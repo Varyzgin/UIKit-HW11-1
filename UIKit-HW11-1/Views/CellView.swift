@@ -8,13 +8,15 @@
 import UIKit
 
 class CellView: UITableViewCell {
-    private static let originScale = CGAffineTransform(scaleX: 1, y: 1)
     static let identifier: String = "CellView"
+
+    private static let originScale = CGAffineTransform(scaleX: 1, y: 1)
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = .orange
         addSubview(pictureView)
     }
+    
     public func configure(with content: Content) {
         pictureView.image = UIImage(named: content.pictureName)
         
@@ -28,21 +30,23 @@ class CellView: UITableViewCell {
         ])
     }
     
+    public var completion : (() -> Void)?
+    
     private lazy var pictureView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
 
-        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(pinchGesture))
-        $0.addGestureRecognizer(pinchGesture)
+        $0.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(pinchGesture)))
+        $0.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGesture)))
+        
         return $0
     }(UIImageView())
     
     @objc
     private func pinchGesture(sender: UIPinchGestureRecognizer) {
         guard let senderView = sender.view else { return }
-//        print(sender.scale)
         senderView.transform = senderView.transform.scaledBy(x: sender.scale, y: sender.scale)
         
         if sender.state == .ended {
@@ -52,6 +56,10 @@ class CellView: UITableViewCell {
         }
         
         sender.scale = 1
+    }
+    @objc
+    private func tapGesture(sender: UITapGestureRecognizer) {
+        self.completion?()
     }
     
     required init?(coder: NSCoder) {

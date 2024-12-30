@@ -14,7 +14,6 @@ final class MainViewController: UIViewController {
         $0.dataSource = self
         $0.register(CellView.self, forCellReuseIdentifier: CellView.identifier)
         $0.rowHeight = view.frame.width
-        $0.delegate = self
         return $0
     }(UITableView(frame: view.frame, style: .plain))
 
@@ -26,7 +25,7 @@ final class MainViewController: UIViewController {
 
 }
 
-extension MainViewController: UITableViewDataSource, UITableViewDelegate {
+extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
     }
@@ -34,13 +33,13 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CellView.identifier, for: indexPath) as? CellView else { return UITableViewCell() }
         cell.configure(with: data[indexPath.row])
+        cell.completion = {
+            let vc = GalleryViewController()
+            vc.configure(with: self.data[indexPath.row].pictureName)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
         return cell
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = GalleryViewController()
-        print( data[indexPath.row].pictureName)
-        vc.configure(with: data[indexPath.row].pictureName)
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     

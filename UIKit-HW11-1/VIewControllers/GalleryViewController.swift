@@ -32,7 +32,9 @@ class GalleryViewController: UIViewController, UIScrollViewDelegate {
     
     @objc
     private func doubleTapGesture(sender: UIGestureRecognizer) {
-        scrollView.zoomScale = 1
+        UIView.animate(withDuration: 0.3) {
+            self.scrollView.zoomScale = 1
+        }
     }
     
     internal func viewForZooming(in scrollView: UIScrollView) -> UIView? {
